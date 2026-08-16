@@ -56,9 +56,9 @@ export const api = {
   getHistory: () => request<Prediction[]>('/api/predictions/history'),
   getPrediction: (matchId: string, selection: string) =>
     request<Prediction>(`/api/predictions/${matchId}/${selection}`),
-  me: () => request<{ uid: string; email: string | null; premium: boolean; premium_until?: string }>('/api/me'),
+  me: () => request<{ uid: string; email: string | null; premium: boolean; premium_until?: string }>('/api/me', { method: 'POST' }),
   refreshClaims: () =>
-    request<{ premium: boolean; premium_until?: string; admin: boolean }>('/api/refresh-claims'),
+    request<{ premium: boolean; premium_until?: string; admin: boolean }>('/api/refresh-claims', { method: 'POST' }),
   purchaseIntent: (productId = 'premium_monthly') =>
     request<{ order_id: string; payment_url: string; amount: number; currency: string }>(
       '/api/purchase/intent',
