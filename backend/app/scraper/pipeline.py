@@ -10,6 +10,7 @@ Flujo:
 
 from __future__ import annotations
 
+import datetime as dt
 import logging
 
 from app.core import firebase
@@ -90,6 +91,36 @@ class PredictionPipeline:
 
     async def publish(self, predictions: list[Prediction]) -> int:
         db = firebase.db()
+
+        # 1) Borrar predicciones anteriores de HOY para evitar duplicados
+        #    y contradicciones de runs previos. Usamos solo filtro por status
+        #    (sin índice compuesto) y filtramos por fecha en Python.
+        from app.api.predictions import _start_of_today_colombia
+        start_today = _start_of_today_colombia()
+        old_docs = (
+            db.collection("predictions")
+            .where("status", "==", "active")
+            .limit(500)
+            .get()
+        )
+        batch = db.batch()
+        deleted = 0
+        for doc in old_docs:
+            data = doc.to_dict()
+            created = data.get("created_at")
+            if created and hasattr(created, "replace"):
+                # Firestore Timestamp -> datetime
+                created_dt = created.replace(tzinfo=dt.timezone.utc) if created.tzinfo is None else created
+            else:
+                created_dt = None
+            if created_dt and created_dt >= start_today:
+                batch.delete(doc.reference)
+                deleted += 1
+        if deleted:
+            batch.commit()
+            logger.info("Borradas %d predicciones anteriores de hoy", deleted)
+
+        # 2) Escribir las nuevas
         batch = db.batch()
         count = 0
         for pred in predictions:
@@ -97,7 +128,7 @@ class PredictionPipeline:
                 f"{pred.match_id}_{pred.selection}"
             )
             data = pred.model_dump()  # datetimes -> Firestore Timestamp
-            batch.set(doc_ref, data, merge=True)
+            batch.set(doc_ref, data)
             count += 1
             if count % 400 == 0:
                 batch.commit()
