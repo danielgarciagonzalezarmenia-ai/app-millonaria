@@ -115,7 +115,7 @@ export function History() {
               return (
                 <div
                   key={`${p.match_id}_${p.selection}`}
-                  className={`bento-normal reveal`}
+                  className="bento-normal"
                   style={{ position: 'relative' }}
                 >
                   <PredictionCard prediction={p} locked={p.premium && !premium} featured={i === 0} />

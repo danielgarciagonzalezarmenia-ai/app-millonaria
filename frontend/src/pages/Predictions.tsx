@@ -89,7 +89,7 @@ export function Predictions() {
             return (
               <div
                 key={`${p.match_id}_${p.selection}`}
-                className={`${i === 0 ? 'bento-featured' : 'bento-normal'} reveal`}
+                className={i === 0 ? 'bento-featured' : 'bento-normal'}
                 style={{ position: 'relative' }}
               >
                 <PredictionCard prediction={p} locked={locked} featured={i === 0} />

@@ -39,4 +39,4 @@ services:
       - key: FREE_PREDICTIONS_THRESHOLD
         value: "5"
       - key: ADMIN_UIDS
-        value: '["8sUfJgLES3ZXzmgKOxjaIY0KKFC3"]'
+        sync: false
