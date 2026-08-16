@@ -1,0 +1,9 @@
+.venv
+__pycache__
+*.pyc
+.env
+.secrets
+.pytest_cache
+tests
+_probe*.py
+.DS_Store
