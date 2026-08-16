@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: app-millonaria-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 10000
+    healthCheckPath: /api/health
+    envVars:
+      - key: ENV
+        value: production
+      - key: APP_URL
+        value: https://app-millonaria-2026.web.app
+      - key: CORS_ORIGINS
+        value: '["https://app-millonaria-2026.web.app"]'
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_BASE64
+        sync: false
+      - key: TIPSTERPAGE_WEBHOOK_SECRET
+        sync: false
+      - key: TIPSTERPAGE_PRODUCT_URL
+        sync: false
+      - key: PREMIUM_PRICE_USD
+        value: "9.99"
+      - key: MIN_ODDS
+        value: "1.70"
+      - key: SCRAPED_MATCHES_LIMIT
+        value: "30"
+      - key: SCRAPER_LEAGUES
+        value: "[]"
+      - key: PREMIUM_LEAGUES
+        value: "[]"
+      - key: FREE_PREDICTIONS_WHEN_FEW
+        value: "1"
+      - key: FREE_PREDICTIONS_WHEN_MANY
+        value: "2"
+      - key: FREE_PREDICTIONS_THRESHOLD
+        value: "5"
+      - key: ADMIN_UIDS
+        value: "[]"
