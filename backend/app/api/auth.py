@@ -7,8 +7,6 @@ el UID del usuario. Nunca se confía en el UID que mande el cliente.
 
 from __future__ import annotations
 
-from functools import lru_cache
-
 from fastapi import Depends, Header, HTTPException, status
 from firebase_admin import auth as firebase_auth
 
@@ -19,7 +17,6 @@ class AuthError(HTTPException):
     pass
 
 
-@lru_cache
 def _verify_id_token(id_token: str) -> dict:
     try:
         return firebase_auth.verify_id_token(id_token, app=firebase.get_app())

@@ -94,10 +94,11 @@ async def me(user: FirebaseUser = Depends(get_current_user)) -> dict:
 async def refresh_claims(user: FirebaseUser = Depends(get_current_user)) -> dict:
     """Devuelve los claims frescos (los custom claims tardan en propagarse)."""
     refreshed = firebase_auth.get_user(user.uid, app=firebase.get_app())
-    claims = refreshed.custom_claims or {}
+    fresh_claims = refreshed.custom_claims or {}
     from app.api.auth import is_admin
+    fresh_user = FirebaseUser(uid=user.uid, email=user.email, claims=fresh_claims)
     return {
-        "premium": bool(claims.get("premium")),
-        "premium_until": claims.get("premium_until"),
-        "admin": is_admin(user),
+        "premium": bool(fresh_claims.get("premium")),
+        "premium_until": fresh_claims.get("premium_until"),
+        "admin": is_admin(fresh_user),
     }
