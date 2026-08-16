@@ -2,16 +2,20 @@
 
 Reglas de negocio aplicadas (las que definiste):
 1. Solo tendencias con FUEGO/LLAMA  -> field `confidenceTrendIds` poblado.
-2. Solo POSITIVAS -> usamos la formulación de apuesta (`betCTA`/`cause`) si ya
+2. Solo tendencias COMPLETAS (percentage == 1.0) -> 5/5, 7/7, 8/8, etc.
+   Se descartan las incompletas (10/11, 3/4, 4/6, etc.).
+3. Solo POSITIVAS -> usamos la formulación de apuesta (`betCTA`/`cause`) si ya
    es el mercado a favor (ej: "Villarreal no ganó" se traduce a "Racing gana o
    empata").
-3. Solo mercados que INVOLUCRAN A AMBOS EQUIPOS:
+4. Solo mercados que INVOLUCRAN A AMBOS EQUIPOS:
    - Ambos equipos marcan (BTTS)
    - Más de 2.5 goles
    - Victoria de X (X gana)
    - X gana o empata / doble oportunidad (1X / X2)
    (se descartan: anotó primero, primer tiempo, menos de 2.5, córners, etc.)
-4. Cuota >= 1.70.
+5. Cuota >= 1.70.
+6. Sin contradicciones por partido: si hay "local gana" y "visitante gana"
+   para el mismo partido, se queda solo con la de mayor cuota.
 """
 
 from __future__ import annotations
@@ -144,9 +148,12 @@ def build_predictions(game: ApiGame, trends_resp: TrendsResponse) -> list[Predic
         if not trend.is_fire:
             continue  # 1) solo tendencias con llama/fuego
 
+        if trend.percentage < 1.0:
+            continue  # 2) solo tendencias COMPLETAS (5/5, 7/7, 8/8, etc.)
+
         odds = trend.decimal_odds
         if odds is None or odds < settings.min_odds:
-            continue  # 4) cuota minima 1.70
+            continue  # 5) cuota minima 1.70
 
         positive = _positive_text(trend)
         match_info = classify_market(positive)
@@ -198,7 +205,40 @@ def build_predictions(game: ApiGame, trends_resp: TrendsResponse) -> list[Predic
         )
 
     predictions = sorted(candidates.values(), key=lambda p: (-p.odds, -p.confidence))
+    predictions = _resolve_conflicts(predictions)
     return predictions
+
+
+def _resolve_conflicts(predictions: list[Prediction]) -> list[Prediction]:
+    """Elimina predicciones contradictorias para el mismo partido.
+
+    Si un partido tiene tanto "local gana" como "visitante gana" (o ambas
+    variantes de doble oportunidad), se queda solo con la de mayor cuota.
+    """
+    CONFLICT_PAIRS = [
+        frozenset([TrendType.HOME_WIN, TrendType.AWAY_WIN]),
+        frozenset([TrendType.HOME_OR_DRAW, TrendType.AWAY_OR_DRAW]),
+    ]
+
+    to_remove: set[int] = set()
+
+    for i, p1 in enumerate(predictions):
+        if i in to_remove:
+            continue
+        for j, p2 in enumerate(predictions):
+            if j <= i or j in to_remove:
+                continue
+            if p1.match_id != p2.match_id:
+                continue
+            pair = frozenset([p1.market_type, p2.market_type])
+            if pair in CONFLICT_PAIRS:
+                if p1.odds >= p2.odds:
+                    to_remove.add(j)
+                else:
+                    to_remove.add(i)
+                    break
+
+    return [p for i, p in enumerate(predictions) if i not in to_remove]
 
 
 def _side_from_competitor_ids(trend, game: ApiGame) -> str | None:
