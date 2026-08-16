@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// Reglas de seguridad de Firestore de App Millonaria.
+//
+// Estrategia:
+// - El navegador NUNCA escribe directamente en Firestore (todo pasa por el
+//   backend con el Admin SDK, que salta estas reglas).
+// - Lectura directa desde el navegador se limita a lo estrictamente público
+//   (pronósticos gratis) y a lo del propio usuario (su orden y su perfil).
+// - Regla de oro: deny all por defecto.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Pronósticos ----------
+    match /predictions/{predictionId} {
+      // Escritura SOLO via Admin SDK (backend). El navegador no escribe aqui.
+      allow write: if false;
+
+      allow read: if resource.data.premium == false                // gratis, todo el mundo
+                 || (request.auth != null
+                     && request.auth.token.premium == true);       // premium solo suscriptores
+    }
+
+    // ---------- Usuarios ----------
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      // El estado premium se gestiona desde el backend (set_custom_user_claims
+      // y admin SDK). El cliente no modifica su perfil directamente.
+      allow write: if false;
+    }
+
+    // ---------- Órdenes de compra ----------
+    match /orders/{orderId} {
+      // Solo el dueño puede consultar su propia orden (para ver el estado).
+      allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow write: if false; // las crea/actualiza el backend
+    }
+
+    // ---------- Debug/otros ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
