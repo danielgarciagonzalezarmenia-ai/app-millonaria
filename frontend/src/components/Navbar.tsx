@@ -12,7 +12,7 @@ import {
 } from '@phosphor-icons/react'
 import { useSession } from '../lib/auth'
 
-const links = [
+const baseLinks = [
   { to: '/', label: 'Inicio', icon: House, end: true },
   { to: '/pronosticos', label: 'Pronósticos', icon: ChartLineUp },
   { to: '/historial', label: 'Historial', icon: ClockCounterClockwise },
@@ -23,6 +23,10 @@ export function Navbar() {
   const { user, premium, admin, loading, signInWithGoogle, signOutUser } = useSession()
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+
+  const links = admin
+    ? [...baseLinks, { to: '/admin', label: 'Admin', icon: Gear, end: false }]
+    : baseLinks
 
   const handleSignOut = () => {
     setOpen(false)
@@ -72,17 +76,6 @@ export function Navbar() {
                 {label}
               </NavLink>
             ))}
-            {admin && (
-              <NavLink
-                to="/admin"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? 'active' : ''}`
-                }
-              >
-                <Gear size={15} weight="regular" />
-                Admin
-              </NavLink>
-            )}
           </nav>
 
           <div className="flex gap-2" style={{ alignItems: 'center' }}>
@@ -167,26 +160,6 @@ export function Navbar() {
               </NavLink>
             </div>
           ))}
-          {admin && (
-            <div style={open ? { width: '100%' } : undefined}>
-              <NavLink
-                to="/admin"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? 'active' : ''}`
-                }
-                style={{
-                  fontSize: '1.6rem',
-                  padding: '0.9rem 2rem',
-                  borderRadius: '1rem',
-                  transitionDelay: open ? `${80 + links.length * 55}ms` : undefined,
-                }}
-                onClick={() => setOpen(false)}
-              >
-                <Gear size={22} />
-                Admin
-              </NavLink>
-            </div>
-          )}
         </nav>
       </div>
     </>

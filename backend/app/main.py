@@ -95,8 +95,9 @@ async def refresh_claims(user: FirebaseUser = Depends(get_current_user)) -> dict
     """Devuelve los claims frescos (los custom claims tardan en propagarse)."""
     refreshed = firebase_auth.get_user(user.uid, app=firebase.get_app())
     claims = refreshed.custom_claims or {}
+    from app.api.auth import is_admin
     return {
         "premium": bool(claims.get("premium")),
         "premium_until": claims.get("premium_until"),
-        "admin": bool(claims.get("admin")),
+        "admin": is_admin(user),
     }

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSession } from '../lib/auth'
 import { api, type Prediction } from '../lib/api'
-import { Trash, Pencil, Plus, X, Warning } from '@phosphor-icons/react'
+import { Trash, Pencil, X, Warning } from '@phosphor-icons/react'
 
 const MARKETS = [
   { value: 'home_win', label: 'Gana el local' },
