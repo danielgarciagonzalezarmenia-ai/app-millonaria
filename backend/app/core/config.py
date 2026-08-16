@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     # TipsterPage (firma HMAC-SHA256) y no de un tercero malicioso.
     tipsterpage_webhook_secret: str = ""
     # URL del producto que creaste en TipsterPage (link de pago por producto).
-    tipsterpage_product_url: str = ""
+    tipsterpage_product_url: str = "https://appmillonaria.tipsterpage.com/XgMzEEzn"
     premium_price_usd: float = 9.99
 
     # --- Compañía ---
