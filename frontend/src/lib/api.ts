@@ -64,4 +64,21 @@ export const api = {
       '/api/purchase/intent',
       { method: 'POST', body: JSON.stringify({ product_id: productId }) },
     ),
+
+  // Admin
+  adminListPredictions: () => request<Prediction[]>('/api/admin/predictions'),
+  adminCreatePrediction: (pred: Omit<Prediction, 'created_at'>) =>
+    request<Prediction>('/api/admin/predictions', {
+      method: 'POST',
+      body: JSON.stringify(pred),
+    }),
+  adminUpdatePrediction: (docId: string, pred: Omit<Prediction, 'created_at'>) =>
+    request<Prediction>(`/api/admin/predictions/${docId}`, {
+      method: 'PUT',
+      body: JSON.stringify(pred),
+    }),
+  adminDeletePrediction: (docId: string) =>
+    request<{ detail: string; doc_id: string }>(`/api/admin/predictions/${docId}`, {
+      method: 'DELETE',
+    }),
 }

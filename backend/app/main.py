@@ -17,7 +17,7 @@ from slowapi.util import get_remote_address
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.responses import JSONResponse
 
-from app.api import predictions, purchase, webhooks
+from app.api import predictions, purchase, webhooks, admin
 from app.api.auth import FirebaseUser, get_current_user
 from app.core import firebase
 from app.core.config import settings
@@ -41,7 +41,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[origin for origin in settings.cors_origins if origin],
     allow_credentials=True,
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Authorization", "Content-Type", "X-TipsterPage-Signature", "X-Hub-Signature"],
 )
 
@@ -67,6 +67,7 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
 app.include_router(predictions.router)
 app.include_router(purchase.router)
 app.include_router(webhooks.router)
+app.include_router(admin.router)
 
 
 @app.get("/")
