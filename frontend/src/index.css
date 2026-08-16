@@ -727,3 +727,269 @@ a {
   .desktop-only { display: none; }
   .title-display { font-size: clamp(2.1rem, 8.5vw, 3rem); }
 }
+
+/* ==========================================================================
+   MOBILE OVERHAUL — Touch-first · Bottom nav · Compact spacing
+   ========================================================================== */
+
+/* --- Bottom nav bar (mobile only) --- */
+.bottom-nav {
+  display: none;
+}
+
+/* --- Tap highlight --- */
+a, button, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* --- Scroll padding for bottom nav --- */
+html {
+  scroll-padding-top: 80px;
+}
+
+/* --- Bottom nav (768px and below) --- */
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 110;
+    background: rgba(8, 8, 14, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.35rem 0 calc(0.35rem + env(safe-area-inset-bottom, 0px));
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.75rem;
+    color: var(--text-mute);
+    font-size: 0.62rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease, background 0.2s ease;
+    min-width: 0;
+    flex: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .bottom-nav-item.active {
+    color: var(--brand);
+    background: rgba(124, 107, 255, 0.1);
+  }
+
+  .bottom-nav-item:active {
+    transform: scale(0.92);
+  }
+
+  /* Hide the floating top nav on mobile */
+  .nav-island {
+    display: none;
+  }
+
+  /* Add bottom padding to main content so it doesn't hide behind bottom nav */
+  main {
+    padding-bottom: 5rem;
+  }
+
+  /* --- Hero mobile --- */
+  .hero {
+    padding: 5.5rem 0 2rem;
+    gap: 2rem;
+  }
+
+  .hero .subtitle {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-top: 1.6rem;
+  }
+
+  .hero-cta .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.9rem 1.2rem;
+  }
+
+  /* --- Stats bar mobile (2x2 grid) --- */
+  .stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
+    margin-top: 2rem;
+  }
+
+  .stat {
+    padding: 0.85rem 1rem;
+  }
+
+  .stat .num {
+    font-size: 1.5rem;
+  }
+
+  /* --- Container mobile --- */
+  .container {
+    width: min(1120px, 92%);
+  }
+
+  /* --- Section mobile --- */
+  .section {
+    padding: 2.5rem 0;
+  }
+
+  /* --- Bento mobile --- */
+  .bento {
+    gap: 0.85rem;
+  }
+
+  /* --- Prediction card mobile --- */
+  .pred-card {
+    padding: 1.1rem 1.15rem;
+    gap: 0.95rem;
+  }
+
+  .pred-card:hover {
+    transform: none;
+  }
+
+  .team-row {
+    padding: 0.45rem 0.6rem;
+    gap: 0.65rem;
+  }
+
+  .team-badge {
+    width: 30px;
+    height: 30px;
+    font-size: 0.72rem;
+    border-radius: 9px;
+  }
+
+  .team-name {
+    font-size: 0.88rem;
+  }
+
+  .market-tag {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .odds-chip {
+    font-size: 1.1rem;
+  }
+
+  .basis-chip {
+    font-size: 0.68rem;
+    padding: 0.25rem 0.55rem;
+  }
+
+  /* --- Feature cards mobile --- */
+  .feature-ic {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+  }
+
+  /* --- Pricing mobile --- */
+  .price-num {
+    font-size: 2.6rem;
+  }
+
+  /* --- Lock scrim mobile --- */
+  .lock-shell {
+    max-width: 260px;
+  }
+
+  /* --- Footer mobile --- */
+  .footer {
+    margin-top: 3rem;
+    padding-bottom: 5rem;
+  }
+
+  .footer .container {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.6rem;
+    padding: 2rem 0;
+  }
+
+  /* --- Scroll reveal lighter on mobile --- */
+  .reveal {
+    transform: translateY(16px);
+  }
+}
+
+/* --- Small phones (400px and below) --- */
+@media (max-width: 400px) {
+  .stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .stat {
+    padding: 0.65rem 0.7rem;
+  }
+
+  .stat .num {
+    font-size: 1.25rem;
+  }
+
+  .stat .lbl {
+    font-size: 0.65rem;
+  }
+
+  .hero {
+    padding: 5rem 0 1.5rem;
+  }
+
+  .title-display {
+    font-size: clamp(1.7rem, 8vw, 2.2rem);
+  }
+
+  .pred-card {
+    padding: 0.95rem;
+    gap: 0.8rem;
+  }
+}
+
+/* --- Touch devices: disable hover transforms --- */
+@media (hover: none) and (pointer: coarse) {
+  .pred-card:hover {
+    transform: none;
+  }
+
+  .btn:hover {
+    transform: none;
+  }
+}
+
+/* --- Safe area for iPhone notch (bottom nav) --- */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-nav {
+    padding-bottom: calc(0.35rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* ---------- Admin form responsive grid ---------- */
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

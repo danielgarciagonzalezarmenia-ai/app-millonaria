@@ -174,7 +174,7 @@ export function Admin() {
   if (loading || !admin) return null
 
   return (
-    <div className="page-container" style={{ maxWidth: 900, margin: '0 auto', padding: '2rem 1rem' }}>
+    <div className="page-container" style={{ maxWidth: 900, margin: '0 auto', padding: '2rem 1rem 5rem' }}>
       <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '1.5rem' }}>
         Panel Admin
       </h1>
@@ -213,7 +213,7 @@ export function Admin() {
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
+        <div className="admin-form-grid">
           <Field label="Liga" name="league" value={form.league} onChange={handleChange} placeholder="ej: Premier League" />
           <Field label="Fecha/hora (UTC)" name="kickoff" value={form.kickoff} onChange={handleChange} type="datetime-local" />
           <Field label="Equipo local" name="home_team" value={form.home_team} onChange={handleChange} placeholder="ej: River Plate" required />
